@@ -1,2 +1,12 @@
-This is git learning notes without using command
-added the readme file 2
+## Tech Stack
+- Java
+- Spring Boot
+- Hibernate / JPA
+- MySQL
+
+## Features
+- REST APIs
+- CRUD operations
+- Validation
+- Exception handling
+
