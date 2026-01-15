@@ -33,12 +33,33 @@ public class SecurityConfig {
 
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(request -> request
-                        .requestMatchers( "/auth/**","/rooms/**","/bookings/**").permitAll()
-                        .anyRequest().authenticated())
-                .sessionManagement(manager ->manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                        "/auth/register",
+                        "/auth/login",
+                        "/rooms/all",
+                        "/rooms/types",
+                        "/rooms/room-by-id/**",
+                        "/rooms/available-rooms-by-date-and-type",
+                        "/rooms/all-available-rooms"
+                ).permitAll()
+                .requestMatchers("/rooms/add","/rooms/update/**","/rooms/delete/**")
+                    .hasAuthority("ADMIN")
+                .requestMatchers("/bookings/**")
+                    .hasAnyAuthority("ADMIN","USER")
+                .requestMatchers("/users/**")
+                    .authenticated()
+                .anyRequest().authenticated()
+            )
+.sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+.authenticationProvider(authenticationProvider())
+.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                // .authorizeHttpRequests(request -> request
+                //         .requestMatchers( "/auth/**","/rooms/**","/bookings/**").permitAll()
+                //         .anyRequest().authenticated())
+                // .sessionManagement(manager ->manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // .authenticationProvider(authenticationProvider())
+                // .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }
